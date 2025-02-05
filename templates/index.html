@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Realistic Multiplayer Roulette</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="/static/roulette.js"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h1>🎰 Realistic Multiplayer Roulette</h1>
+    <button id="bet-button">Place Bet</button>
+    <button id="spin-button">Spin the Wheel</button>
+    
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        document.getElementById("bet-button").onclick = function () {
+            socket.emit("place_bet", { player_id: "player1", bet_number: 12, bet_amount: 10 });
+        };
+
+        document.getElementById("spin-button").onclick = function () {
+            socket.emit("lock_bets");
+        };
+
+        socket.on("update_players", function (data) {
+            console.log("Updated players:", data.players);
+        });
+
+        socket.on("spin_result", function (data) {
+            alert("The wheel landed on: " + data.winning_number);
+        });
+    </script>
+</body>
+</html>
